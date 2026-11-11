@@ -314,7 +314,6 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .pupil { fill: #10301c; transition: r 0.2s ease; }
 .brow { fill: none; stroke: #10301c; stroke-width: 2.6; stroke-linecap: round; }
 .mouth { fill: none; stroke: #10301c; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
-.happy-eye { fill: none; stroke: #10301c; stroke-width: 2.6; stroke-linecap: round; opacity: 0; }
 .sweat { fill: #9fd8ff; stroke: #4a8dc0; stroke-width: 0.8; opacity: 0; }
 .m-face[data-stage="2"] .pupil { r: 2.2; }
 .m-face[data-stage="2"] .sweat, .m-face[data-stage="3"] .sweat { opacity: 1; animation: sweat 1.2s ease-in infinite; }
@@ -322,9 +321,6 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .m-face[data-stage="3"] .pupil { r: 1.6; }
 .m-face[data-stage="3"] .eye-w { ry: 9; }
 .m-face[data-stage="3"] .mouth { fill: #4a1010; }
-.m-face[data-stage="happy"] .eye-w, .m-face[data-stage="happy"] .pupil { opacity: 0; }
-.m-face[data-stage="happy"] .happy-eye { opacity: 1; }
-.m-face[data-stage="happy"] .mouth { fill: #7a1d22; }
 /* strain: the more bands, the more it trembles */
 .m-whole, .m-wobble { transform-box: view-box; transform-origin: 120px 178px; }
 .melon-svg[data-stage="1"] .m-wobble { animation: tremble 0.5s ease-in-out infinite; --amp: 0.6deg; }

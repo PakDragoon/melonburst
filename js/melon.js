@@ -1,6 +1,7 @@
 // The watermelon, drawn in SVG. Every wrong letter snaps a rubber band round its middle: the middle
 // pinches in, the ends bulge, the face goes from happy to worried to panicking, cracks and juice
-// appear, and one band too many makes it burst. Solving it pings the bands off.
+// appear, and one band too many makes it burst. Solving it pings the bands off and the melon
+// springs back into shape, keeping its face and cracks.
 
 const NS = 'http://www.w3.org/2000/svg';
 const CX = 120, CY = 112, RX = 90, RY = 66;
@@ -94,7 +95,6 @@ export function createMelon(container, opts = {}) {
           <g class="eyes">
             <ellipse class="eye-w" cx="-11" cy="0" rx="7" ry="8"/><ellipse class="eye-w" cx="11" cy="0" rx="7" ry="8"/>
             <circle class="pupil" cx="-10" cy="1" r="3.4"/><circle class="pupil" cx="12" cy="1" r="3.4"/>
-            <path class="happy-eye" d="M-17 1 q6 -7 12 0 M5 1 q6 -7 12 0"/>
           </g>
           <path class="mouth"/>
           <path class="sweat" d="M22 -14 q4 6 0 9 q-4 -3 0 -9z"/>
@@ -150,10 +150,10 @@ export function createMelon(container, opts = {}) {
     });
   }
 
-  function face(stage, solved) {
+  function face(stage) {
     // stage: 0 calm, 1 worried, 2 scared, 3 panic
     const f = $('.m-face');
-    f.dataset.stage = solved ? 'happy' : String(stage);
+    f.dataset.stage = String(stage);
     const brows = [
       ['M-17 -12 q6 -4 12 0', 'M5 -12 q6 -4 12 0'],
       ['M-17 -11 l12 -4', 'M5 -15 l12 4'],
@@ -162,8 +162,7 @@ export function createMelon(container, opts = {}) {
     ][Math.min(stage, 3)];
     $('.brow.l').setAttribute('d', brows[0]);
     $('.brow.r').setAttribute('d', brows[1]);
-    const mouth = solved ? 'M-12 14 q12 14 24 0 z'
-      : ['M-10 15 q10 9 20 0', 'M-9 17 h18', 'M-11 18 q3 -4 6 0 t6 0 t6 0', 'M-6 18 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0'][Math.min(stage, 3)];
+    const mouth = ['M-10 15 q10 9 20 0', 'M-9 17 h18', 'M-11 18 q3 -4 6 0 t6 0 t6 0', 'M-6 18 a6 7 0 1 0 12 0 a6 7 0 1 0 -12 0'][Math.min(stage, 3)];
     $('.mouth').setAttribute('d', mouth);
   }
 
@@ -215,19 +214,30 @@ export function createMelon(container, opts = {}) {
     const strain = n / bands;
     const pinch = 0.06 + strain * 0.34;
     const swell = strain;
-    const body = bodyPath(pinch, swell);
-    $('.m-body').setAttribute('d', body);
-    $('.clip-path').setAttribute('d', body);
-    $('.m-shade').setAttribute('d', body);
+    const crackLevel = n >= bands ? 4 : n >= bands - 1 ? 2 : 0;
+    const shape = (p, sw) => {
+      const body = bodyPath(p, sw);
+      $('.m-body').setAttribute('d', body);
+      $('.clip-path').setAttribute('d', body);
+      $('.m-shade').setAttribute('d', body);
+      drawCracks(crackLevel, p);
+    };
+    const pingNow = state.solved && !shown.solved && animate && shown.wrong >= 0;
+    // Solved: the melon gets its round shape back (once the bands have pinged off), but keeps
+    // its face and its cracks. The face is the expression it had at the moment it was solved.
+    shape(state.solved && !pingNow ? 0.06 : pinch, state.solved && !pingNow ? 0 : swell);
     const stage = strain >= 1 ? 3 : strain > 0.6 ? 2 : strain > 0.25 ? 1 : 0;
     svg.dataset.stage = state.solved ? 'safe' : String(stage);
-    drawCracks(n >= bands ? 4 : n >= bands - 1 ? 2 : 0, pinch);
     drawDrips(!state.solved && n >= bands, pinch);
-    face(stage, state.solved);
-    if (state.solved && !shown.solved && animate && shown.wrong >= 0) {
-      // the bands ping off
+    face(stage);
+    if (pingNow) {
+      // the bands ping off, then the melon springs back into shape
       $('.m-bands').querySelectorAll('.band').forEach((b, k) => { b.classList.add('ping'); b.style.animationDelay = `${k * 0.06}s`; });
-      setTimeout(() => { if (svg.isConnected && shown.solved) drawBands(0, pinch, swell, false); }, 700);
+      setTimeout(() => {
+        if (!svg.isConnected || !shown.solved) return;
+        drawBands(0, pinch, swell, false);
+        shape(0.06, 0);
+      }, 700);
       svg.classList.remove('hop');
       void svg.getBoundingClientRect();
       svg.classList.add('hop');
