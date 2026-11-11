@@ -1218,7 +1218,7 @@ function renderPick(v) {
   if (imPicker && !v.picked[side]) {
     const forWho = sideName(v, opp);
     html = `<h2>Pick a word for ${esc(forWho)}</h2>
-      <p>A real English word, 4 to 12 letters. They’ll get ${plural(v.settings.bands, 'band')} to spare. ${left}s left (then the computer picks one for you).</p>
+      <p>A real English word, 4 to 12 letters. They’ll get ${plural(v.settings.bands, 'band')} to spare. <span class="pick-left">${left}</span>s left (then the computer picks one for you).</p>
       <form class="pick-row" id="pick-form" autocomplete="off">
         <input id="pick-input" maxlength="16" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Your word" value="${esc(S.pickDraft)}">
         <button class="btn primary" type="submit" ${S.pickSent ? 'disabled' : ''}>Use it</button>
@@ -1231,7 +1231,7 @@ function renderPick(v) {
     html = `<h2>${v.picked[side] ? 'Your side’s word is in' : `${esc(nameOf(v, pickerFor))} is picking your side’s word`}</h2>
       ${sideWord ? `<p>For ${esc(sideName(v, opp))}:</p><div class="picked-word">${esc(sideWord)}</div>` : '<p>You’ll see it once it’s picked.</p>'}
       <p class="small-note">${status(opp)}</p>
-      <p class="small-note muted">Then you’ll guess theirs. ${left}s left to pick.</p>`;
+      <p class="small-note muted">Then you’ll guess theirs. <span class="pick-left">${left}</span>s left to pick.</p>`;
   } else {
     html = `<h2>Picking words</h2><p>${status('A')}</p><p>${status('B')}</p>`;
   }
@@ -1239,7 +1239,7 @@ function renderPick(v) {
   const hasInput = $('pick-input');
   if (hasInput && imPicker && !v.picked[side]) {
     box.querySelector('.small-note').innerHTML = status(opp);
-    box.querySelector('p').innerHTML = `A real English word, 4 to 12 letters. They’ll get ${plural(v.settings.bands, 'band')} to spare. ${left}s left (then the computer picks one for you).`;
+    box.querySelector('p').innerHTML = `A real English word, 4 to 12 letters. They’ll get ${plural(v.settings.bands, 'band')} to spare. <span class="pick-left">${left}</span>s left (then the computer picks one for you).`;
     box.querySelector('button[type="submit"]').disabled = S.pickSent;
     updatePickHint();
     return;
@@ -1567,16 +1567,16 @@ $('quit-btn').addEventListener('click', () => { closeRoom(); goHome(); });
 setInterval(() => {
   const v = S.view;
   if (!v || $('game').hidden) return;
+  const s = Math.ceil(phaseLeft(v) / 1000);
   const chip = $('timer-chip');
   if (chip) {
-    const left = phaseLeft(v);
-    const s = Math.ceil(left / 1000);
     chip.textContent = `${s}s`;
     chip.classList.toggle('urgent', s <= 10);
     if (s <= 5 && s > 0 && S.lastTick !== s && v.phase === 'guess' && myGuess(v) && !myGuess(v).done) { S.lastTick = s; SOUND.tick(); }
   }
   if (v.phase === 'countdown') renderCountdown(v);
   if (v.phase === 'reveal') updateNextIn();
+  if (v.phase === 'pick') document.querySelectorAll('.pick-left').forEach((el) => { el.textContent = s; });
 }, 250);
 
 /* =========================================================
