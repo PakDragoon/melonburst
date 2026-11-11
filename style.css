@@ -58,6 +58,8 @@
 }
 
 *, *::before, *::after { box-sizing: inherit; }
+/* The inside of <details> sits in a ::details-content box that the rule above can't reach */
+details * { box-sizing: border-box; }
 html, body { height: 100%; }
 body {
   margin: 0;
@@ -104,7 +106,7 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 #code-input::placeholder { letter-spacing: normal; text-transform: none; }
 .error { color: var(--danger); font-weight: 600; margin: 0; }
 .error:empty { display: none; }
-.select-field { display: grid; gap: 0.35rem; font-weight: 600; }
+.select-field { display: grid; grid-template-columns: minmax(0, 1fr); gap: 0.35rem; font-weight: 600; }
 .select-field select {
   font: 600 1rem var(--font); color: var(--ink); background: var(--surface);
   border: 1px solid var(--line); border-radius: 10px; padding: 0.65rem 0.75rem; width: 100%;
@@ -152,30 +154,36 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 
 
 
-/* The logo: MELON on rind-green tiles, BURST blown apart */
+/* The logo: MEL(slice)N in rind green, BURST on a comic explosion */
 .logo { display: grid; justify-items: start; gap: 0.5rem; margin-bottom: 0.25rem; }
-.logo-row { display: flex; align-items: center; gap: 3px; flex-wrap: nowrap; position: relative; max-width: 100%; }
-.logo-row .gap { width: clamp(6px, 2vw, 14px); }
-.lt {
-  display: grid; place-items: center; width: clamp(26px, 7.4vw, 42px); aspect-ratio: 1; border-radius: 8px;
-  font-size: clamp(0.95rem, 4vw, 1.5rem); font-weight: 800; line-height: 1;
-  animation: tile-in 0.45s cubic-bezier(.3, 1.4, .5, 1) both; animation-delay: calc(var(--k) * 0.05s);
+.logo-row { display: flex; align-items: center; gap: clamp(8px, 2vw, 16px); flex-wrap: wrap; position: relative; max-width: 100%; }
+.logo-melon {
+  display: inline-flex; align-items: center; font-size: clamp(2.5rem, 10.5vw, 3.8rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1;
+  color: var(--rind); text-shadow: 0 3px 0 var(--rind-edge);
+  animation: tile-in 0.45s cubic-bezier(.3, 1.4, .5, 1) both;
 }
-.lt.melon { color: #fff; background: var(--rind); border: 1.5px solid var(--rind-edge); box-shadow: inset 0 -5px 0 -2px var(--rind-dark); }
-.lt.burst {
-  color: #fff; background: var(--flesh); border: 1.5px solid color-mix(in srgb, var(--flesh) 60%, #000);
-  transform: translate(var(--x), var(--y)) rotate(var(--r));
-  animation: tile-in 0.45s cubic-bezier(.3, 1.4, .5, 1) both, blow 4.5s ease-in-out 1s infinite;
-  animation-delay: calc(var(--k) * 0.05s), calc(1s + var(--k) * 0.03s);
+.logo-slice { width: 0.8em; height: 0.8em; margin: 0 0.03em; overflow: visible; animation: slice-spin 6s ease-in-out infinite; filter: drop-shadow(0 3px 0 var(--rind-edge)); }
+@keyframes slice-spin { 0%, 70%, 100% { transform: rotate(0); } 80% { transform: rotate(-14deg); } 90% { transform: rotate(10deg); } }
+.sl-rind { fill: var(--rind-edge); }
+.sl-light { fill: #8fd18b; }
+.sl-white { fill: #f3f7e8; }
+.sl-flesh { fill: var(--flesh); }
+.sl-seeds ellipse { fill: var(--seed); }
+.sl-shine { fill: none; stroke: rgba(255, 255, 255, 0.55); stroke-width: 5; stroke-linecap: round; }
+.logo-burst {
+  position: relative; display: inline-grid; place-items: center; padding: 0.45em 0.7em;
+  font-size: clamp(1.6rem, 6.6vw, 2.4rem); animation: tile-in 0.45s 0.15s cubic-bezier(.3, 1.4, .5, 1) both;
 }
-@keyframes blow {
-  0%, 62% { transform: translate(var(--x), var(--y)) rotate(var(--r)); }
-  68% { transform: translate(0, 0) rotate(0) scale(0.92); }
-  74% { transform: translate(calc(var(--x) * 1.6), calc(var(--y) * 1.6)) rotate(calc(var(--r) * 1.6)) scale(1.06); }
-  86%, 100% { transform: translate(var(--x), var(--y)) rotate(var(--r)); }
+.logo-boom { position: absolute; inset: -14% -10%; width: 120%; height: 128%; overflow: visible; animation: boom 2.8s ease-in-out infinite; }
+.boom-out { fill: #ffd23f; stroke: #c2334d; stroke-width: 4; stroke-linejoin: round; }
+.boom-in { fill: #ff8a3d; }
+.burst-word {
+  position: relative; font-weight: 800; line-height: 1; letter-spacing: 0.02em; color: #fff;
+  -webkit-text-stroke: 2px #9e1f2d; paint-order: stroke fill; text-shadow: 0 3px 0 #9e1f2d;
+  transform: rotate(-6deg); animation: boom-word 2.8s ease-in-out infinite;
 }
-.logo-seed { position: absolute; width: 5px; height: 8px; border-radius: 50%; background: var(--seed); }
-@media (prefers-color-scheme: dark) { .logo-seed { background: #d8d2c4; } }
+@keyframes boom { 0%, 100% { transform: scale(1) rotate(0); } 8% { transform: scale(1.12) rotate(-3deg); } 16% { transform: scale(0.97) rotate(1deg); } 24% { transform: scale(1.03); } }
+@keyframes boom-word { 0%, 100% { transform: rotate(-6deg) scale(1); } 8% { transform: rotate(-9deg) scale(1.15); } 16% { transform: rotate(-5deg) scale(0.98); } }
 
 @keyframes tile-in { from { transform: translateY(-14px); opacity: 0; } }
 .logo-sub { color: var(--muted); font-size: 1.05rem; font-weight: 600; letter-spacing: 0.01em; line-height: 1.3; }
@@ -236,9 +244,9 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .more summary::-webkit-details-marker { display: none; }
 .more summary::before { content: ''; width: 7px; height: 7px; border-right: 2px solid var(--muted); border-bottom: 2px solid var(--muted); transform: rotate(-45deg); transition: transform 0.15s ease; }
 .more[open] summary::before { transform: rotate(45deg); }
-.select-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; padding: 0 0.9rem 0.9rem; }
-.select-grid .select-field { font-size: 0.88rem; }
-.select-grid select { font-size: 0.92rem; padding: 0.55rem 0.6rem; background: var(--bg); }
+.select-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.75rem; padding: 0 0.9rem 0.9rem; }
+.select-grid .select-field { font-size: 0.88rem; min-width: 0; }
+.select-grid select { font-size: 0.92rem; padding: 0.55rem 0.6rem; background: var(--bg); min-width: 0; max-width: 100%; }
 @media (max-width: 560px) { .select-grid { grid-template-columns: minmax(0, 1fr); } }
 
 /* ---------- Game ---------- */

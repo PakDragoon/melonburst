@@ -1722,14 +1722,14 @@ $('leave-lobby').addEventListener('click', () => { closeRoom(); goHome(); });
    Home
    ========================================================= */
 function logoHtml() {
-  const melon = 'MELON'.split('').map((ch, i) => `<span class="lt melon" style="--k:${i}">${ch}</span>`).join('');
-  const blown = [[-6, -7, -14], [-2, 5, 9], [3, -9, -6], [7, 6, 12], [12, -4, 18]];
-  const burst = 'BURST'.split('').map((ch, i) => {
-    const [x, y, r] = blown[i];
-    return `<span class="lt burst" style="--k:${i + 5};--x:${x}px;--y:${y}px;--r:${r}deg">${ch}</span>`;
-  }).join('');
-  const seeds = [[62, -14, 30], [72, 70, -20], [96, -8, 60], [88, 78, 10]].map(([l, t, r]) => `<i class="logo-seed" style="left:${l}%;top:${t}%;transform:rotate(${r}deg)"></i>`).join('');
-  return `${melon}<span class="gap"></span>${burst}${seeds}`;
+  // MEL, a slice of watermelon for the O, N; then BURST on a comic explosion
+  const slice = `<svg class="logo-slice" viewBox="0 0 100 100" aria-hidden="true">
+    <circle cx="50" cy="50" r="48" class="sl-rind"/><circle cx="50" cy="50" r="42" class="sl-light"/>
+    <circle cx="50" cy="50" r="38" class="sl-white"/><circle cx="50" cy="50" r="35" class="sl-flesh"/>
+    <g class="sl-seeds"><ellipse cx="87.2" cy="57.5" rx="2.6" ry="5" transform="rotate(101 87.2 57.5)"/><ellipse cx="71.0" cy="81.7" rx="2.6" ry="5" transform="rotate(146 71.0 81.7)"/><ellipse cx="42.5" cy="87.2" rx="2.6" ry="5" transform="rotate(191 42.5 87.2)"/><ellipse cx="18.3" cy="71.0" rx="2.6" ry="5" transform="rotate(236 18.3 71.0)"/><ellipse cx="12.8" cy="42.5" rx="2.6" ry="5" transform="rotate(281 12.8 42.5)"/><ellipse cx="29.0" cy="18.3" rx="2.6" ry="5" transform="rotate(326 29.0 18.3)"/><ellipse cx="57.5" cy="12.8" rx="2.6" ry="5" transform="rotate(371 57.5 12.8)"/><ellipse cx="81.7" cy="29.0" rx="2.6" ry="5" transform="rotate(416 81.7 29.0)"/><ellipse cx="62.4" cy="65.7" rx="2.2" ry="4.2" transform="rotate(142 62.4 65.7)"/><ellipse cx="38.9" cy="66.7" rx="2.2" ry="4.2" transform="rotate(214 38.9 66.7)"/><ellipse cx="30.7" cy="44.6" rx="2.2" ry="4.2" transform="rotate(286 30.7 44.6)"/><ellipse cx="49.2" cy="30.0" rx="2.2" ry="4.2" transform="rotate(358 49.2 30.0)"/><ellipse cx="68.7" cy="43.0" rx="2.2" ry="4.2" transform="rotate(430 68.7 43.0)"/></g><path class="sl-shine" d="M26 30 a30 30 0 0 1 22 -12"/></svg>`;
+  const boom = `<svg class="logo-boom" viewBox="0 0 240 120" aria-hidden="true">
+    <path class="boom-out" d="M251.5 66.5L196.1 72.6L220.7 90.3L177.4 87.5L184.0 108.7L147.4 97.1L136.4 124.5L112.0 99.2L82.4 115.0L78.1 93.6L37.6 101.5L52.6 81.4L-4.2 82.2L40.4 64.9L2.6 54.2L43.9 47.4L19.3 29.7L62.6 32.5L48.3 5.4L92.6 22.9L105.4 2.4L128.0 20.8L157.6 5.0L161.9 26.4L212.3 13.5L187.4 38.6L230.9 40.2L199.6 55.1Z"/><path class="boom-in" d="M217.8 74.8L176.7 75.7L186.1 89.2L156.2 85.3L151.8 99.4L128.5 90.0L110.2 106.8L99.2 88.7L72.4 95.9L73.9 81.7L42.9 82.9L57.8 70.5L17.8 66.0L54.1 57.1L32.7 46.8L63.3 44.3L53.9 30.8L83.8 34.7L84.4 15.9L111.5 30.0L128.8 18.2L140.8 31.3L167.6 24.1L166.1 38.3L206.3 34.3L182.2 49.5L211.2 54.6L185.9 62.9Z"/></svg>`;
+  return `<span class="logo-melon">MEL${slice}N</span><span class="logo-burst">${boom}<span class="burst-word">BURST</span></span>`;
 }
 
 const paintPrLength = segment($('pr-length'), () => PRACTICE.length, (v) => { PRACTICE.length = v; store.set('practice', PRACTICE); }, () => true);
