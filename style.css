@@ -394,17 +394,19 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 .wrong-letters s { text-decoration-thickness: 2px; }
 
 /* Keyboard */
-.kbd { display: grid; gap: 6px; width: 100%; max-width: 560px; user-select: none; -webkit-user-select: none; touch-action: manipulation; }
+.kbd { display: grid; gap: 6px; width: min(500px, calc(100vw - 1rem)); user-select: none; -webkit-user-select: none; touch-action: manipulation; }
 .kbd-row { display: flex; gap: 5px; justify-content: center; }
+/* Same size and feel as Lettuce Party's keyboard, whatever the word's length.
+   Every key is a tenth of the row (less the gaps), so the shorter rows keep the same key width. */
 .key {
-  flex: 1; max-width: 48px; height: 52px; padding: 0; border-radius: 8px; cursor: pointer;
-  font: 700 1.05rem var(--font); text-transform: uppercase; color: var(--ink);
-  background: var(--surface); border: 1px solid var(--line); touch-action: manipulation;
+  flex: 0 1 calc((100% - 9 * var(--kgap, 5px)) / 10); min-width: 0; height: 56px; padding: 0; border-radius: 6px; cursor: pointer;
+  font: 800 1rem var(--font); text-transform: uppercase; color: var(--ink);
+  background: var(--key); border: 1px solid var(--key); touch-action: manipulation;
   transition: background 0.15s ease, transform 0.08s ease;
 }
-.key:active { transform: translateY(1px); background: var(--key); }
+.key:active { transform: translateY(1px); filter: brightness(0.92); }
 .key.hit { background: var(--hit); border-color: var(--hit); color: #fff; }
-.key.miss { background: var(--key); border-color: var(--key); color: var(--muted); text-decoration: line-through; opacity: 0.7; }
+.key.miss { background: transparent; border-color: var(--line); color: var(--muted); text-decoration: line-through; opacity: 0.7; }
 .key:disabled { cursor: default; }
 .kbd.off .key:not(.hit):not(.miss) { opacity: 0.5; }
 
@@ -524,8 +526,8 @@ h1, h2, h3 { line-height: 1.15; margin: 0; }
 /* Phones */
 @media (max-width: 640px) {
   .melon-host { width: min(78vw, 260px, calc(100dvh - 400px)); min-width: 170px; }
-  .key { height: 48px; font-size: 0.95rem; }
-  .kbd-row { gap: 4px; }
+  .key { height: 50px; }
+  .kbd-row { gap: 4px; --kgap: 4px; }
   .mode-cards, .team-cards { grid-template-columns: minmax(0, 1fr); }
   .flash { top: 3.6rem; font-size: 0.9rem; }
 }
