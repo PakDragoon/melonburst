@@ -4,6 +4,8 @@ A word-guessing party game for colleagues, in the browser. Guess a hidden word o
 
 Play at `https://pakdragoon.github.io/melonburst/`.
 
+Game idea by [Rijja](https://www.linkedin.com/in/rijja-farhan-011381214/). Thank you!
+
 ## Ways to play
 
 | Mode | Players | Who picks the word |
