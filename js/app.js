@@ -1722,13 +1722,41 @@ $('leave-lobby').addEventListener('click', () => { closeRoom(); goHome(); });
    Home
    ========================================================= */
 function logoHtml() {
-  // MEL, a slice of watermelon for the O, N; then BURST on a comic explosion
-  const slice = `<svg class="logo-slice" viewBox="0 0 100 100" aria-hidden="true">
-    <circle cx="50" cy="50" r="48" class="sl-rind"/><circle cx="50" cy="50" r="42" class="sl-light"/>
-    <circle cx="50" cy="50" r="38" class="sl-white"/><circle cx="50" cy="50" r="35" class="sl-flesh"/>
-    <g class="sl-seeds"><ellipse cx="87.2" cy="57.5" rx="2.6" ry="5" transform="rotate(101 87.2 57.5)"/><ellipse cx="71.0" cy="81.7" rx="2.6" ry="5" transform="rotate(146 71.0 81.7)"/><ellipse cx="42.5" cy="87.2" rx="2.6" ry="5" transform="rotate(191 42.5 87.2)"/><ellipse cx="18.3" cy="71.0" rx="2.6" ry="5" transform="rotate(236 18.3 71.0)"/><ellipse cx="12.8" cy="42.5" rx="2.6" ry="5" transform="rotate(281 12.8 42.5)"/><ellipse cx="29.0" cy="18.3" rx="2.6" ry="5" transform="rotate(326 29.0 18.3)"/><ellipse cx="57.5" cy="12.8" rx="2.6" ry="5" transform="rotate(371 57.5 12.8)"/><ellipse cx="81.7" cy="29.0" rx="2.6" ry="5" transform="rotate(416 81.7 29.0)"/><ellipse cx="62.4" cy="65.7" rx="2.2" ry="4.2" transform="rotate(142 62.4 65.7)"/><ellipse cx="38.9" cy="66.7" rx="2.2" ry="4.2" transform="rotate(214 38.9 66.7)"/><ellipse cx="30.7" cy="44.6" rx="2.2" ry="4.2" transform="rotate(286 30.7 44.6)"/><ellipse cx="49.2" cy="30.0" rx="2.2" ry="4.2" transform="rotate(358 49.2 30.0)"/><ellipse cx="68.7" cy="43.0" rx="2.2" ry="4.2" transform="rotate(430 68.7 43.0)"/></g><path class="sl-shine" d="M26 30 a30 30 0 0 1 22 -12"/></svg>`;
-  const boom = `<svg class="logo-boom" viewBox="0 0 240 120" aria-hidden="true">
-    <path class="boom-out" d="M251.5 66.5L196.1 72.6L220.7 90.3L177.4 87.5L184.0 108.7L147.4 97.1L136.4 124.5L112.0 99.2L82.4 115.0L78.1 93.6L37.6 101.5L52.6 81.4L-4.2 82.2L40.4 64.9L2.6 54.2L43.9 47.4L19.3 29.7L62.6 32.5L48.3 5.4L92.6 22.9L105.4 2.4L128.0 20.8L157.6 5.0L161.9 26.4L212.3 13.5L187.4 38.6L230.9 40.2L199.6 55.1Z"/><path class="boom-in" d="M217.8 74.8L176.7 75.7L186.1 89.2L156.2 85.3L151.8 99.4L128.5 90.0L110.2 106.8L99.2 88.7L72.4 95.9L73.9 81.7L42.9 82.9L57.8 70.5L17.8 66.0L54.1 57.1L32.7 46.8L63.3 44.3L53.9 30.8L83.8 34.7L84.4 15.9L111.5 30.0L128.8 18.2L140.8 31.3L167.6 24.1L166.1 38.3L206.3 34.3L182.2 49.5L211.2 54.6L185.9 62.9Z"/></svg>`;
+  // MEL, a wedge of watermelon for the O, N; then BURST with melon bits, seeds, juice and wind
+  // flying out from behind it
+  const slice = `<svg class="logo-slice" viewBox="0 0 100 110" aria-hidden="true">
+    <path class="sl-rind" d="M50 4 L96 84 A54 54 0 0 1 4 84 Z"/>
+    <path class="sl-light" d="M50 11 L89 80 A47 47 0 0 1 11 80 Z"/>
+    <path class="sl-white" d="M50 15 L85 77 A42 42 0 0 1 15 77 Z"/>
+    <path class="sl-flesh" d="M50 19 L82 74 A38 38 0 0 1 18 74 Z"/>
+    <g class="sl-seeds">${[[50, 42], [40, 58], [60, 58], [31, 73], [50, 74], [69, 73]].map(([x, y]) => `<ellipse cx="${x}" cy="${y}" rx="2.8" ry="5"/>`).join('')}</g>
+    <path class="sl-shine" d="M44 30 L30 54"/></svg>`;
+  const rnd = E.mulberry32(7);
+  const bits = [];
+  const N = 30;
+  for (let i = 0; i < N; i++) {
+    // All pop together (with a little jitter) when the word punches; they fly out sideways and up,
+    // only a short way down so they don't cover the line underneath
+    const a = (i / N) * Math.PI * 2 + rnd() * 0.3;
+    const reach = 0.55 + rnd() * 0.6;
+    const c = Math.cos(a), sn = Math.sin(a);
+    const dx = c * (c < 0 ? 62 : 96) * reach;
+    const dy = sn * (sn > 0 ? 16 : 46) * reach;
+    const style = `--dx:${dx.toFixed(0)}px;--dy:${dy.toFixed(0)}px;--rot:${((rnd() - 0.5) * 540).toFixed(0)}deg;--d:${(rnd() * 0.18).toFixed(2)}s`;
+    const kind = i % 4;
+    if (kind === 0) bits.push(`<path class="lb-bit lb-chunk" style="${style}" d="M0 -7 L7 5 A8 8 0 0 1 -7 5 Z"/>`);
+    else if (kind === 1) bits.push(`<ellipse class="lb-bit lb-seed" style="${style}" rx="1.8" ry="3.2"/>`);
+    else if (kind === 2) bits.push(`<circle class="lb-bit lb-drop" style="${style}" r="${(2 + rnd() * 2.2).toFixed(1)}"/>`);
+    else bits.push(`<path class="lb-bit lb-rind" style="${style}" d="M-6 0 Q0 -5 6 0"/>`);
+  }
+  // Wind: streaks shooting out from the middle
+  const wind = Array.from({ length: 12 }, (_, i) => {
+    const a = (i / 12) * Math.PI * 2 + 0.13;
+    const sq = Math.sin(a) > 0 ? 0.45 : 1;
+    const x1 = Math.cos(a) * 46, y1 = Math.sin(a) * 18 * sq, x2 = Math.cos(a) * 118, y2 = Math.sin(a) * 52 * sq;
+    return `<line class="lb-wind" style="--d:${(0.02 + (i % 3) * 0.05).toFixed(2)}s" x1="${x1.toFixed(0)}" y1="${y1.toFixed(0)}" x2="${x2.toFixed(0)}" y2="${y2.toFixed(0)}"/>`;
+  }).join('');
+  const boom = `<svg class="logo-boom" viewBox="-130 -70 260 140" aria-hidden="true">${wind}${bits.join('')}</svg>`;
   return `<span class="logo-melon">MEL${slice}N</span><span class="logo-burst">${boom}<span class="burst-word">BURST</span></span>`;
 }
 
